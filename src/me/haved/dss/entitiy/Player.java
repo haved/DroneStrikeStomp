@@ -1,5 +1,6 @@
 package me.haved.dss.entitiy;
 
+import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
 
 import me.haved.dss.core.DSSTextureLoader;
@@ -14,6 +15,8 @@ public class Player extends Entity
 	private float animation = 0;
 	private boolean facingRight = false;
 	
+	private float speed = 10;
+	private float maxSpeed = 500;
 	
 	public Player()
 	{
@@ -29,17 +32,37 @@ public class Player extends Entity
 	public void update(GameDroneStrikeStomp game)
 	{
 		ySpeed += GRAVITY * Time.delta();
-		move();
+		
+		xSpeed -= xSpeed * 15f * Time.delta();
+		
+		input(game);
+		move(game);
+		
 		if(y + height > RenderEngine.getCanvasHeight())
 			y = RenderEngine.getCanvasHeight() - height;
 		
 		updateAnimation();
 	}
 	
+	private void input(GameDroneStrikeStomp game)
+	{
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_LEFT))
+		{
+			xSpeed -= speed * 1000 * Time.delta();
+		}
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_RIGHT))
+		{
+			xSpeed += speed * 1000 * Time.delta();
+		}
+		
+		xSpeed = Math.max(-maxSpeed, Math.min(maxSpeed, xSpeed));
+	}
+	
 	private void updateAnimation()
 	{
-		animation += Time.delta();
-		animation %= 0.3f;
+		animation += Math.abs(xSpeed)*Time.delta();
+		animation %= 140;
 		
 		if(xSpeed > 0.2f)
 			facingRight = true;
@@ -50,8 +73,8 @@ public class Player extends Entity
 	public void render()
 	{
 		sprite.bind();
-		float i = animation < 0.15f ? 0 : 0.5f;
-		byte faceShift = facingRight ? (byte)1 : 0;
-		RenderEngine.fillRectangleWithTexture(x, y, width, height, i, (0+faceShift)%2, i+0.5f, (1+faceShift)%2);
+		float i = animation < 70 ? 0 : 0.5f;
+		float faceShift = facingRight ? 0.25f : -0.25f;
+		RenderEngine.fillRectangleWithTexture(x, y, width, height, i+(0.25f+faceShift), 0, i+(0.25f-faceShift), 1);
 	}
 }

@@ -1,11 +1,19 @@
 package me.haved.dss.core;
 
+import org.lwjgl.input.Keyboard;
+
 import me.haved.dss.entitiy.Player;
 import me.haved.engine.Game;
 import me.haved.engine.RenderEngine;
 
 public class GameDroneStrikeStomp extends Game
 {
+	public static final int KEY_CODE_LEFT = Keyboard.KEY_LEFT;
+	public static final int KEY_CODE_RIGHT = Keyboard.KEY_RIGHT;
+	public static final int KEY_CODE_UP = Keyboard.KEY_UP;
+	public static final int KEY_CODE_DOWN = Keyboard.KEY_DOWN;
+	public static final int KEY_CODE_JUMP = Keyboard.KEY_Z;
+	
 	Player player;
 	
 	public void init()

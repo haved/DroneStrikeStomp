@@ -15,7 +15,7 @@ public class Entity
 		
 	}
 	
-	public void move()
+	public void move(GameDroneStrikeStomp game)
 	{
 		x += xSpeed * Time.delta();
 		y += ySpeed * Time.delta();
