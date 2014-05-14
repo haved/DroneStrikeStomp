@@ -50,6 +50,79 @@ public class Player extends Entity
 		updateAnimation();
 	}
 	
+	@Override
+	public void move(GameDroneStrikeStomp game)
+	{
+		float newX = x + xSpeed * Time.delta();
+		float newX2 = newX + width;
+		float newY = y + ySpeed * Time.delta();
+		float newY2 = newY + height;
+		float x2 = x + width;
+		float y2 = y + height;
+		
+		for(Collider c:game.clouds)
+			checkCollider(c, x2, y2, newX, newY, newX2, newY2);
+		
+		super.move(game);
+	}
+	
+	private void checkCollider(Collider c, float x2, float y2, float newX, float newY, float newX2, float newY2)
+	{
+		if(xSpeed < 0)
+		{
+			if(isBlockedLeft(c, newX, newX2, y2))
+			{
+				x = c.getX2();
+				xSpeed = 0;
+			}
+		}
+		else if(xSpeed > 0)
+		{
+			if(isBlockedRight(c, newX, newX2, y2))
+			{
+				x = c.getX() - width;
+				xSpeed = 0;
+			}
+		}
+		
+		if(ySpeed < 0)
+		{
+			if(isBlockedUp(c, newY, newY2, x2))
+			{
+				y = c.getY2();
+				ySpeed = 0;
+			}
+		}
+		else if(ySpeed > 0)
+		{
+			if(isBlockedDown(c, newY, newY2, x2))
+			{
+				y = c.getY() - height;
+				ySpeed = 0;
+			}
+		}
+	}
+	
+	private boolean isBlockedLeft(Collider c, float newX, float newX2, float y2)
+	{
+		return newX < c.getX2() & newX > c.getX() & y < c.getY2() & y2 > c.getY();
+	}
+	
+	private boolean isBlockedRight(Collider c, float newX, float newX2, float y2)
+	{
+		return newX2 > c.getX() & newX2 < c.getX2() & y < c.getY2() & y2 > c.getY();
+	}
+	
+	private boolean isBlockedUp(Collider c, float newY, float newY2, float x2)
+	{
+		return newY < c.getY2() & newY > c.getY() & x < c.getX2() & x2 > c.getX();
+	}
+	
+	private boolean isBlockedDown(Collider c, float newY, float newY2, float x2)
+	{
+		return newY2 > c.getY() & newY2 < c.getY2() & x < c.getX2() & x2 > c.getX();
+	}
+	
 	private void input(GameDroneStrikeStomp game)
 	{
 		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_LEFT))
@@ -86,5 +159,10 @@ public class Player extends Entity
 		float i = animation < 70 ? 0 : 0.5f;
 		float faceShift = facingRight ? 0.25f : -0.25f;
 		RenderEngine.fillRectangleWithTexture(x, y, width, height, i+(0.25f+faceShift), 0, i+(0.25f-faceShift), 1);
+	}
+
+	public float getCameraScroll(GameDroneStrikeStomp game)
+	{
+		return Math.min(0, Math.max(game.worldWidth, x - RenderEngine.getCanvasWidth() / 2));
 	}
 }

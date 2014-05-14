@@ -3,6 +3,7 @@ package me.haved.dss.core;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.opengl.Texture;
 
 import me.haved.dss.entitiy.Cloud;
 import me.haved.dss.entitiy.Player;
@@ -18,21 +19,28 @@ public class GameDroneStrikeStomp extends Game
 	public static final int KEY_CODE_JUMP = Keyboard.KEY_Z;
 	public static final int KEY_CODE_SHOOT = Keyboard.KEY_X;
 	
-	Player player;
-	ArrayList<Cloud> clouds;
+	private static Texture background;
+	
+	public float worldWidth = 10000;
+	
+	public Player player;
+	public ArrayList<Cloud> clouds;
 	
 	public void init()
 	{
-		initEntityAssets();
+		initAssets();
 		
 		player = new Player();
 		clouds = new ArrayList<Cloud>();
 		
-		clouds.add(new Cloud(20, 400, 50));
+		clouds.add(new Cloud(20, 400, 100));
+		clouds.add(new Cloud(200, 600, 100));
+		clouds.add(new Cloud(600, 880, 100));
 	}
 	
-	private void initEntityAssets()
+	private void initAssets()
 	{
+		background = DSSTextureLoader.loadTexture("bg.png");
 		Player.init();
 		Cloud.init();
 	}
@@ -41,20 +49,22 @@ public class GameDroneStrikeStomp extends Game
 	{
 		player.update(this);
 		for(Cloud c:clouds)
-			c.render();
+			c.update(this);
 	}
 	
 	public void render()
 	{
-		renderBG();
+		float scroll = player.getCameraScroll(this);
+		renderBG(scroll);
 		renderWorld();
 		renderUI();
 	}
 	
-	private void renderBG()
+	private void renderBG(float scroll)
 	{
-		RenderEngine.setColor(0.4f, 0.6f, 1f);
-		RenderEngine.fillRectangle(0, 0, RenderEngine.getCanvasWidth(), RenderEngine.getCanvasHeight());
+		RenderEngine.resetColor();
+		background.bind();
+		RenderEngine.fillRectangleWithTexture(0, 0, RenderEngine.getCanvasWidth(), RenderEngine.getCanvasHeight(), 0, 0, 1, 1);
 	}
 	
 	private void renderWorld()

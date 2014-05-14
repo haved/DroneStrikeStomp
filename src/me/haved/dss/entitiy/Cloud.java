@@ -6,7 +6,7 @@ import me.haved.engine.RenderEngine;
 
 import org.newdawn.slick.opengl.Texture;
 
-public class Cloud extends Entity
+public class Cloud extends Entity implements Collider
 {
 	private static Texture sprite;
 	
@@ -36,4 +36,16 @@ public class Cloud extends Entity
 		sprite.bind();
 		RenderEngine.fillRectangleWithTexture(x, y, width, height, 0, 0, 1, 1);
 	}
+
+	@Override
+	public float getX(){return x;}
+
+	@Override
+	public float getY(){return y;}
+
+	@Override
+	public float getX2(){return x+width;}
+
+	@Override
+	public float getY2(){return y+height;}
 }
