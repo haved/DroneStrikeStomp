@@ -5,7 +5,7 @@ import me.haved.engine.Time;
 
 public class Entity
 {
-	public static final float GRAVITY = 890f;
+	public static final float GRAVITY = 1500f;
 	
 	protected float x, y, width, height;
 	protected float xSpeed, ySpeed;
