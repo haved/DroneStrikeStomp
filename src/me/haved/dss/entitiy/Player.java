@@ -163,6 +163,6 @@ public class Player extends Entity
 
 	public float getCameraScroll(GameDroneStrikeStomp game)
 	{
-		return Math.min(0, Math.max(game.worldWidth, x - RenderEngine.getCanvasWidth() / 2));
+		return Math.max(0, Math.min(game.worldWidth, x - RenderEngine.getCanvasWidth() / 2));
 	}
 }

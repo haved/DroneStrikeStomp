@@ -56,15 +56,20 @@ public class GameDroneStrikeStomp extends Game
 	{
 		float scroll = player.getCameraScroll(this);
 		renderBG(scroll);
+		RenderEngine.pushMatrix();
+		RenderEngine.translate(-scroll, 0, 0);
 		renderWorld();
+		RenderEngine.popMatrix();
 		renderUI();
 	}
 	
 	private void renderBG(float scroll)
 	{
+		float xShift = scroll / RenderEngine.getCanvasWidth();
+		
 		RenderEngine.resetColor();
 		background.bind();
-		RenderEngine.fillRectangleWithTexture(0, 0, RenderEngine.getCanvasWidth(), RenderEngine.getCanvasHeight(), 0, 0, 1, 1);
+		RenderEngine.fillRectangleWithTexture(0, 0, RenderEngine.getCanvasWidth(), RenderEngine.getCanvasHeight(), xShift, 0, xShift + 1, 1);
 	}
 	
 	private void renderWorld()
