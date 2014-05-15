@@ -36,16 +36,4 @@ public class Cloud extends Entity implements Collider
 		sprite.bind();
 		RenderEngine.fillRectangleWithTexture(x, y, width, height, 0, 0, 1, 1);
 	}
-
-	@Override
-	public float getX(){return x;}
-
-	@Override
-	public float getY(){return y;}
-
-	@Override
-	public float getX2(){return x+width;}
-
-	@Override
-	public float getY2(){return y+height;}
 }

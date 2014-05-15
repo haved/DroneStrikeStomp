@@ -25,4 +25,16 @@ public class Entity
 	{
 		
 	}
+	
+	public float getX(){return x;}
+
+	public float getY(){return y;}
+
+	public float getX2(){return x+width;}
+
+	public float getY2(){return y+height;}
+	
+	public float getCentreX(){return x+width/2;}
+	
+	public float getCentreY(){return y+height/2;}
 }

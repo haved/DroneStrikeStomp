@@ -16,10 +16,12 @@ public class Player extends Entity
 	private boolean facingRight = false;
 	
 	private float friction = 4f;
-	
 	private float speed = 10;
 	private float maxSpeed = 500;
 	private float jump = 1000;
+	
+	private int maxHealth = 5;
+	private int health = 1;
 	
 	public Player()
 	{
@@ -163,6 +165,26 @@ public class Player extends Entity
 
 	public float getCameraScroll(GameDroneStrikeStomp game)
 	{
-		return Math.max(0, Math.min(game.worldWidth, x - RenderEngine.getCanvasWidth() / 2));
+		return Math.max(0, Math.min(game.worldWidth-RenderEngine.getCanvasWidth(), x - RenderEngine.getCanvasWidth() / 2));
+	}
+	
+	public void damage(int amount)
+	{
+		health -= amount;
+		if(health <= 0)
+		{
+			health = maxHealth;
+		}
+	}
+	
+	public void heal(int amount)
+	{
+		health += amount;
+		health = Math.min(maxHealth, health);
+	}
+	
+	public int getHealth()
+	{
+		return health;
 	}
 }
