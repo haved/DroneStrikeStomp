@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
 import me.haved.dss.entitiy.Cloud;
+import me.haved.dss.entitiy.Pickup;
 import me.haved.dss.entitiy.Player;
 import me.haved.engine.Game;
 import me.haved.engine.RenderEngine;
@@ -33,6 +34,7 @@ public class GameDroneStrikeStomp extends Game
 	
 	public Player player;
 	public ArrayList<Cloud> clouds;
+	public ArrayList<Pickup> pickups;
 	
 	public void init()
 	{
@@ -42,10 +44,13 @@ public class GameDroneStrikeStomp extends Game
 		
 		player = new Player();
 		clouds = new ArrayList<Cloud>();
+		pickups = new ArrayList<Pickup>();
 		
 		clouds.add(new Cloud(20, 400, 100));
 		clouds.add(new Cloud(200, 600, 100));
 		clouds.add(new Cloud(600, 880, 100));
+		
+		pickups.add(new Pickup(Pickup.HEALTH_PICKUP, 200, 200));
 	}
 	
 	private void initAssets()
@@ -54,13 +59,16 @@ public class GameDroneStrikeStomp extends Game
 		heart = DSSTextureLoader.loadTexture("heart.png");
 		Player.init();
 		Cloud.init();
+		Pickup.init();
 	}
 	
 	public void update()
 	{
 		player.update(this);
-		for(Cloud c:clouds)
-			c.update(this);
+		for(Cloud o:clouds)
+			o.update(this);
+		for(Pickup o:pickups)
+			o.update(this);
 	}
 	
 	public void render()
@@ -86,8 +94,10 @@ public class GameDroneStrikeStomp extends Game
 	private void renderWorld()
 	{
 		player.render();
-		for(Cloud c:clouds)
-			c.render();
+		for(Cloud o:clouds)
+			o.render();
+		for(Pickup o:pickups)
+			o.render();
 	}
 	
 	private void renderUI()
@@ -113,8 +123,11 @@ public class GameDroneStrikeStomp extends Game
 		
 		RenderEngine.fillRectangle(player.getCameraScroll(this)/worldWidth*RADAR_WIDTH, -RADAR_Y_SPACING, RenderEngine.getCanvasWidth()/worldWidth*RADAR_WIDTH, RADAR_HEIGHT + RADAR_Y_SPACING*2);
 		
-		for(Cloud c:clouds)
-			drawDotOnRadar(Color.blue, c.getCentreX(), c.getCentreY());
+		for(Cloud o:clouds)
+			drawDotOnRadar(Color.blue, o.getCentreX(), o.getCentreY());
+		
+		for(Pickup o:pickups)
+			drawDotOnRadar(Color.yellow, o.getCentreX(), o.getCentreY());
 		
 		drawDotOnRadar(Color.green, player.getCentreX(), player.getCentreY());
 		
