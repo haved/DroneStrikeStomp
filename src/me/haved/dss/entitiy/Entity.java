@@ -7,6 +7,8 @@ public class Entity
 {
 	public static final float GRAVITY = 1500f;
 	
+	private boolean dead;
+	
 	protected float x, y, width, height;
 	protected float xSpeed, ySpeed;
 	
@@ -24,6 +26,16 @@ public class Entity
 	public void render()
 	{
 		
+	}
+	
+	public void kill()
+	{
+		dead = true;
+	}
+	
+	public boolean isDead()
+	{
+		return dead;
 	}
 	
 	public float getX(){return x;}

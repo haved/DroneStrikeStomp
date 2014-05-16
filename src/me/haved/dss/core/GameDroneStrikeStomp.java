@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
 import me.haved.dss.entitiy.Cloud;
+import me.haved.dss.entitiy.Entity;
 import me.haved.dss.entitiy.Pickup;
 import me.haved.dss.entitiy.Player;
 import me.haved.engine.Game;
@@ -69,6 +70,21 @@ public class GameDroneStrikeStomp extends Game
 			o.update(this);
 		for(Pickup o:pickups)
 			o.update(this);
+		
+		cleanEntityList(clouds);
+		cleanEntityList(pickups);
+	}
+	
+	private void cleanEntityList(ArrayList<? extends Entity> eList)
+	{
+		for(int i = 0; i < eList.size(); i++)
+		{
+			if(eList.get(i).isDead())
+			{
+				eList.remove(i);
+				i--;
+			}
+		}
 	}
 	
 	public void render()

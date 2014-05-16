@@ -43,6 +43,8 @@ public class Player extends Entity
 		input(game);
 		move(game);
 		
+		checkProjectilesAndPickups(game);
+		
 		if(y + height > RenderEngine.getCanvasHeight())
 		{
 			y = RenderEngine.getCanvasHeight() - height;
@@ -50,6 +52,24 @@ public class Player extends Entity
 		}
 
 		updateAnimation();
+	}
+	
+	private void input(GameDroneStrikeStomp game)
+	{
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_LEFT))
+		{
+			xSpeed -= speed * 1000 * Time.delta();
+		}
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_RIGHT))
+		{
+			xSpeed += speed * 1000 * Time.delta();
+		}
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP))
+			ySpeed = -jump;
+		
+		xSpeed = Math.max(-maxSpeed, Math.min(maxSpeed, xSpeed));
 	}
 	
 	@Override
@@ -125,22 +145,21 @@ public class Player extends Entity
 		return newY2 > c.getY() & newY2 < c.getY2() & x < c.getX2() & x2 > c.getX();
 	}
 	
-	private void input(GameDroneStrikeStomp game)
+	private void checkProjectilesAndPickups(GameDroneStrikeStomp game)
 	{
-		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_LEFT))
+		for(Pickup p:game.pickups)
 		{
-			xSpeed -= speed * 1000 * Time.delta();
+			if(isEntityInsidePlayer(p))
+			{
+				
+				p.isDead();
+			}
 		}
-		
-		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_RIGHT))
-		{
-			xSpeed += speed * 1000 * Time.delta();
-		}
-		
-		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP))
-			ySpeed = -jump;
-		
-		xSpeed = Math.max(-maxSpeed, Math.min(maxSpeed, xSpeed));
+	}
+	
+	private boolean isEntityInsidePlayer(Entity e)
+	{
+		return false;
 	}
 	
 	private void updateAnimation()
