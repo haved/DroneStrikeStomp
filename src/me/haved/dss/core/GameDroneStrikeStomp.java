@@ -12,6 +12,8 @@ import me.haved.dss.entitiy.Pickup;
 import me.haved.dss.entitiy.Player;
 import me.haved.engine.Game;
 import me.haved.engine.RenderEngine;
+import me.haved.engine.Time;
+import me.haved.engine.Util;
 
 public class GameDroneStrikeStomp extends Game
 {
@@ -27,6 +29,9 @@ public class GameDroneStrikeStomp extends Game
 	private static float RADAR_WIDTH;
 	private static final float RADAR_HEIGHT = 20;
 	private static final float RADAR_Y_SPACING = 2;
+	
+	private float cloudTimer;
+	private float prevCloudLoc;
 	
 	private static Texture background;
 	private static Texture heart;
@@ -47,9 +52,7 @@ public class GameDroneStrikeStomp extends Game
 		clouds = new ArrayList<Cloud>();
 		pickups = new ArrayList<Pickup>();
 		
-		clouds.add(new Cloud(20, 400, 100));
-		clouds.add(new Cloud(200, 600, 100));
-		clouds.add(new Cloud(600, 880, 100));
+		clouds.add(new Cloud(0, 600, 125));
 		
 		pickups.add(new Pickup(Pickup.HEALTH_PICKUP, 200, 200));
 	}
@@ -67,11 +70,34 @@ public class GameDroneStrikeStomp extends Game
 	{
 		player.update(this);
 		
+		makeClouds();
+		
 		updateEntityList(clouds);
 		updateEntityList(pickups);
 		
 		cleanEntityList(clouds);
 		cleanEntityList(pickups);
+	}
+	
+	private void makeClouds()
+	{
+		cloudTimer -= Time.delta();
+		
+		if(cloudTimer <= 0)
+		{
+			float y = 200+Util.randomFloat(600);
+			
+			if(y < prevCloudLoc)
+				y-=100;
+			
+			if(y > prevCloudLoc)
+				y+=100;
+			
+			prevCloudLoc = y;
+			
+			clouds.add(new Cloud(-128, y, 125));
+			cloudTimer = .5f + Util.randomFloat(1.5f);
+		}
 	}
 	
 	private void updateEntityList(ArrayList<? extends Entity> eList)

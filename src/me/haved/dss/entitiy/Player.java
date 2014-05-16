@@ -20,6 +20,8 @@ public class Player extends Entity
 	private float maxSpeed = 500;
 	private float jump = 1000;
 	
+	private boolean onGround;
+	
 	private int maxHealth = 5;
 	private int health = 1;
 	
@@ -47,6 +49,7 @@ public class Player extends Entity
 		
 		if(y + height > RenderEngine.getCanvasHeight())
 		{
+			onGround = true;
 			y = RenderEngine.getCanvasHeight() - height;
 			ySpeed = 0;
 		}
@@ -66,7 +69,7 @@ public class Player extends Entity
 			xSpeed += speed * 1000 * Time.delta();
 		}
 		
-		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP))
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP) & onGround)
 			ySpeed = -jump;
 		
 		xSpeed = Math.max(-maxSpeed, Math.min(maxSpeed, xSpeed));
@@ -81,6 +84,8 @@ public class Player extends Entity
 		float newY2 = newY + height;
 		float x2 = x + width;
 		float y2 = y + height;
+		
+		onGround = false;
 		
 		for(Collider c:game.clouds)
 			checkCollider(c, x2, y2, newX, newY, newX2, newY2);
@@ -119,6 +124,7 @@ public class Player extends Entity
 		{
 			if(isBlockedDown(c, newY, newY2, x2))
 			{
+				onGround = true;
 				y = c.getY() - height;
 				ySpeed = 0;
 			}

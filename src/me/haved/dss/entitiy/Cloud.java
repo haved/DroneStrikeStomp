@@ -10,7 +10,7 @@ public class Cloud extends Entity implements Collider
 {
 	private static Texture sprite;
 	
-	public Cloud(int x, int y, int xSpeed)
+	public Cloud(float x, float y, float xSpeed)
 	{
 		this.x = x;
 		this.y = y;
