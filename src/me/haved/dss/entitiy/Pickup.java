@@ -26,6 +26,14 @@ public class Pickup extends Entity
 		ySpeed = 200;
 	}
 	
+	public void pickedUp(Player p)
+	{
+		if(type == HEALTH_PICKUP)
+			p.heal(1);
+		
+		kill();
+	}
+	
 	public static void init()
 	{
 		heart = DSSTextureLoader.loadTexture("heart.png");

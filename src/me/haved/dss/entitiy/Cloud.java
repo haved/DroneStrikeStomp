@@ -28,6 +28,9 @@ public class Cloud extends Entity implements Collider
 	public void update(GameDroneStrikeStomp game)
 	{
 		move(game);
+		
+		if(getX2()<0 | getX()>game.worldWidth)
+			kill();
 	}
 	
 	public void render()

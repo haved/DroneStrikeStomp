@@ -150,16 +150,13 @@ public class Player extends Entity
 		for(Pickup p:game.pickups)
 		{
 			if(isEntityInsidePlayer(p))
-			{
-				
-				p.isDead();
-			}
+				p.pickedUp(this);
 		}
 	}
 	
 	private boolean isEntityInsidePlayer(Entity e)
 	{
-		return false;
+		return e.getCentreX() > getX() & e.getCentreX() < getX2() & e.getCentreY() > getY() & e.getCentreY() < getY2();
 	}
 	
 	private void updateAnimation()

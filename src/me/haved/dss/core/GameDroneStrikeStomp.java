@@ -31,7 +31,7 @@ public class GameDroneStrikeStomp extends Game
 	private static Texture background;
 	private static Texture heart;
 	
-	public float worldWidth = 10000;
+	public float worldWidth = 5000;
 	
 	public Player player;
 	public ArrayList<Cloud> clouds;
@@ -66,13 +66,18 @@ public class GameDroneStrikeStomp extends Game
 	public void update()
 	{
 		player.update(this);
-		for(Cloud o:clouds)
-			o.update(this);
-		for(Pickup o:pickups)
-			o.update(this);
+		
+		updateEntityList(clouds);
+		updateEntityList(pickups);
 		
 		cleanEntityList(clouds);
 		cleanEntityList(pickups);
+	}
+	
+	private void updateEntityList(ArrayList<? extends Entity> eList)
+	{
+		for(Entity e:eList)
+			e.update(this);
 	}
 	
 	private void cleanEntityList(ArrayList<? extends Entity> eList)
@@ -85,6 +90,12 @@ public class GameDroneStrikeStomp extends Game
 				i--;
 			}
 		}
+	}
+	
+	private void renderEntityList(ArrayList<? extends Entity> eList)
+	{
+		for(Entity e:eList)
+			e.render();
 	}
 	
 	public void render()
@@ -110,10 +121,8 @@ public class GameDroneStrikeStomp extends Game
 	private void renderWorld()
 	{
 		player.render();
-		for(Cloud o:clouds)
-			o.render();
-		for(Pickup o:pickups)
-			o.render();
+		renderEntityList(clouds);
+		renderEntityList(pickups);
 	}
 	
 	private void renderUI()
