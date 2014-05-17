@@ -11,12 +11,14 @@ import me.haved.engine.Time;
 public class Player extends Entity
 {
 	private static Texture sprite;
+	private static Texture indicatorSprite;
 	
 	private float animation = 0;
 	private boolean facingRight = false;
 	
-	private float friction = 4f;
-	private float speed = 10;
+	private float airFriction = 4f;
+	private float groundFriction = 10f;
+	private float speed = 7;
 	private float maxSpeed = 500;
 	private float jump = 1000;
 	
@@ -34,13 +36,14 @@ public class Player extends Entity
 	public static void init()
 	{
 		sprite = DSSTextureLoader.loadTexture("player.png");
+		indicatorSprite = DSSTextureLoader.loadTexture("playerIndicator.png");
 	}
 	
 	public void update(GameDroneStrikeStomp game)
 	{
 		ySpeed += GRAVITY * Time.delta();
 		
-		xSpeed -= xSpeed * friction * Time.delta();
+		xSpeed -= xSpeed * getFriction() * Time.delta();
 		
 		input(game);
 		move(game);
@@ -55,6 +58,11 @@ public class Player extends Entity
 		}
 
 		updateAnimation();
+	}
+	
+	private float getFriction()
+	{
+		return onGround ? groundFriction : airFriction;
 	}
 	
 	private void input(GameDroneStrikeStomp game)
@@ -179,10 +187,19 @@ public class Player extends Entity
 	public void render()
 	{
 		RenderEngine.resetColor();
-		sprite.bind();
-		float i = animation < 70 ? 0 : 0.5f;
-		float faceShift = facingRight ? 0.25f : -0.25f;
-		RenderEngine.fillRectangleWithTexture(x, y, width, height, i+(0.25f+faceShift), 0, i+(0.25f-faceShift), 1);
+		
+		if(getY2()>0)
+		{
+			sprite.bind();
+			float i = animation < 70 ? 0 : 0.5f;
+			float faceShift = facingRight ? 0.25f : -0.25f;
+			RenderEngine.fillRectangleWithTexture(x, y, width, height, i+(0.25f-faceShift), 0, i+(0.25f+faceShift), 1);
+		}
+		else
+		{
+			indicatorSprite.bind();
+			RenderEngine.fillRectangleWithTexture(x, 0, width, width, 0, 0, 1, 1);
+		}
 	}
 
 	public float getCameraScroll(GameDroneStrikeStomp game)
