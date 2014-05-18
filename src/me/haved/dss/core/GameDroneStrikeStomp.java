@@ -34,7 +34,7 @@ public class GameDroneStrikeStomp extends Game
 	private float cloudTimer;
 	private float prevCloudLoc;
 	private float pickupTimer;
-	private float droneTimer = 20;
+	private float droneTimer = 5;
 	private float prevDroneLoc;
 	
 	private static Texture background;

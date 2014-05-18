@@ -51,6 +51,12 @@ public class Player extends Entity
 		
 		xSpeed -= xSpeed * getFriction() * Time.delta();
 		
+		if(delay>0)
+		{
+			delay -= Time.delta();
+			ySpeed = 0;
+		}
+		
 		input(game);
 		move(game);
 		
