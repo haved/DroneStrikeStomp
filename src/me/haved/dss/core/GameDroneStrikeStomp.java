@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
 import me.haved.dss.entitiy.Cloud;
+import me.haved.dss.entitiy.Drone;
 import me.haved.dss.entitiy.Entity;
 import me.haved.dss.entitiy.Pickup;
 import me.haved.dss.entitiy.Player;
@@ -32,6 +33,9 @@ public class GameDroneStrikeStomp extends Game
 	
 	private float cloudTimer;
 	private float prevCloudLoc;
+	private float pickupTimer;
+	private float droneTimer = 20;
+	private float prevDroneLoc;
 	
 	private static Texture background;
 	private static Texture heart;
@@ -41,6 +45,7 @@ public class GameDroneStrikeStomp extends Game
 	public Player player;
 	public ArrayList<Cloud> clouds;
 	public ArrayList<Pickup> pickups;
+	public ArrayList<Drone> drones;
 	
 	public void init()
 	{
@@ -48,13 +53,12 @@ public class GameDroneStrikeStomp extends Game
 		
 		RADAR_WIDTH = RenderEngine.getCanvasWidth() - 12 - HEART_SPACING*2;
 		
-		player = new Player();
+		player = new Player(100, -64);
 		clouds = new ArrayList<Cloud>();
 		pickups = new ArrayList<Pickup>();
+		drones = new ArrayList<Drone>();
 		
-		clouds.add(new Cloud(0, 600, 125));
-		
-		pickups.add(new Pickup(Pickup.HEALTH_PICKUP, 200, 200));
+		makeInitialClouds();
 	}
 	
 	private void initAssets()
@@ -64,6 +68,7 @@ public class GameDroneStrikeStomp extends Game
 		Player.init();
 		Cloud.init();
 		Pickup.init();
+		Drone.init();
 	}
 	
 	public void update()
@@ -71,12 +76,42 @@ public class GameDroneStrikeStomp extends Game
 		player.update(this);
 		
 		makeClouds();
+		makePickups();
+		makeDrones();
 		
 		updateEntityList(clouds);
 		updateEntityList(pickups);
+		updateEntityList(drones);
 		
 		cleanEntityList(clouds);
 		cleanEntityList(pickups);
+		cleanEntityList(drones);
+	}
+	
+	private void makeInitialClouds()
+	{
+		int timer = 100;
+		
+		for(int i = 0; i < worldWidth; i++)
+		{
+			timer--;
+			
+			if(timer <= 0)
+			{
+				float y = 200+Util.randomFloat(600);
+				
+				if(y < prevCloudLoc)
+					y-=100;
+				
+				if(y > prevCloudLoc)
+					y+=100;
+				
+				prevCloudLoc = y;
+				
+				clouds.add(new Cloud(i, y, 90 + Util.randomFloat(20)));
+				timer = 80 + Util.randomInt(120);
+			}
+		}
 	}
 	
 	private void makeClouds()
@@ -95,8 +130,40 @@ public class GameDroneStrikeStomp extends Game
 			
 			prevCloudLoc = y;
 			
-			clouds.add(new Cloud(-128, y, 125));
+			clouds.add(new Cloud(-128, y, 90 + Util.randomFloat(20)));
 			cloudTimer = .5f + Util.randomFloat(1.5f);
+		}
+	}
+	
+	private void makePickups()
+	{
+		pickupTimer -= Time.delta();
+		
+		if(pickupTimer <= 0)
+		{
+			pickups.add(new Pickup(Pickup.HEALTH_PICKUP, 100 + Util.randomFloat(worldWidth - 200), -32));
+			pickupTimer = 2+Util.randomFloat(3);
+		}
+	}
+	
+	private void makeDrones()
+	{
+		droneTimer -= Time.delta();
+		
+		if(droneTimer <= 0)
+		{
+			float y = 200+Util.randomFloat(600);
+			
+			if(y < prevDroneLoc)
+				y-=100;
+			
+			if(y > prevDroneLoc)
+				y+=100;
+			
+			prevDroneLoc = y;
+			
+			drones.add(new Drone(-128, y, 140 + Util.randomFloat(20)));
+			droneTimer = 2 + Util.randomFloat(2.5f);
 		}
 	}
 	
@@ -149,6 +216,7 @@ public class GameDroneStrikeStomp extends Game
 		player.render();
 		renderEntityList(clouds);
 		renderEntityList(pickups);
+		renderEntityList(drones);
 	}
 	
 	private void renderUI()
@@ -174,11 +242,14 @@ public class GameDroneStrikeStomp extends Game
 		
 		RenderEngine.fillRectangle(player.getCameraScroll(this)/worldWidth*RADAR_WIDTH, -RADAR_Y_SPACING, RenderEngine.getCanvasWidth()/worldWidth*RADAR_WIDTH, RADAR_HEIGHT + RADAR_Y_SPACING*2);
 		
-		for(Cloud o:clouds)
+		for(Entity o:clouds)
 			drawDotOnRadar(Color.blue, o.getCentreX(), o.getCentreY());
 		
-		for(Pickup o:pickups)
+		for(Entity o:pickups)
 			drawDotOnRadar(Color.yellow, o.getCentreX(), o.getCentreY());
+		
+		for(Entity o:drones)
+			drawDotOnRadar(Color.red, o.getCentreX(), o.getCentreY());
 		
 		drawDotOnRadar(Color.green, player.getCentreX(), player.getCentreY());
 		

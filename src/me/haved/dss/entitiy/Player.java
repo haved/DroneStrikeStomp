@@ -13,6 +13,8 @@ public class Player extends Entity
 	private static Texture sprite;
 	private static Texture indicatorSprite;
 	
+	private float delay;
+	
 	private float animation = 0;
 	private boolean facingRight = false;
 	
@@ -24,11 +26,15 @@ public class Player extends Entity
 	
 	private boolean onGround;
 	
-	private int maxHealth = 5;
-	private int health = 1;
+	private int maxHealth = 7;
+	private int health = 5;
 	
-	public Player()
+	public Player(float x, float y)
 	{
+		delay = 5;
+		
+		this.x = x;
+		this.y = y;
 		width = 32;
 		height = 64;
 	}
@@ -96,6 +102,9 @@ public class Player extends Entity
 		onGround = false;
 		
 		for(Collider c:game.clouds)
+			checkCollider(c, x2, y2, newX, newY, newX2, newY2);
+		
+		for(Collider c:game.drones)
 			checkCollider(c, x2, y2, newX, newY, newX2, newY2);
 		
 		super.move(game);
