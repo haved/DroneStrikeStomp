@@ -46,6 +46,10 @@ public class Entity
 
 	public float getY2(){return y+height;}
 	
+	public float getXSpeed(){return xSpeed;}
+	
+	public float getYSpeed(){return ySpeed;}
+	
 	public float getCentreX(){return x+width/2;}
 	
 	public float getCentreY(){return y+height/2;}

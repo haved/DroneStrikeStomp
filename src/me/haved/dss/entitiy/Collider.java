@@ -9,4 +9,8 @@ public interface Collider
 	public float getX2();
 	
 	public float getY2();
+	
+	public float getXSpeed();
+	
+	public float getYSpeed();
 }

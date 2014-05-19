@@ -142,7 +142,7 @@ public class GameDroneStrikeStomp extends Game
 		if(pickupTimer <= 0)
 		{
 			pickups.add(new Pickup(Pickup.HEALTH_PICKUP, 100 + Util.randomFloat(worldWidth - 200), -32));
-			//pickupTimer = 2+Util.randomFloat(3);
+			pickupTimer = 2+Util.randomFloat(3);
 		}
 	}
 	

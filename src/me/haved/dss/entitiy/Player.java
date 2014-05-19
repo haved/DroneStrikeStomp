@@ -25,6 +25,7 @@ public class Player extends Entity
 	private float jump = 1000;
 	
 	private boolean onGround;
+	private float groundSpeed;
 	
 	private int maxHealth = 7;
 	private int health = 5;
@@ -49,7 +50,7 @@ public class Player extends Entity
 	{
 		ySpeed += GRAVITY * Time.delta();
 		
-		xSpeed -= xSpeed * getFriction() * Time.delta();
+		xSpeed -= (xSpeed-groundSpeed) * getFriction() * Time.delta();
 		
 		if(delay>0)
 		{
@@ -105,6 +106,7 @@ public class Player extends Entity
 		float x2 = x + width;
 		float y2 = y + height;
 		
+		groundSpeed = 0;
 		onGround = false;
 		
 		for(Collider c:game.clouds)
@@ -118,7 +120,7 @@ public class Player extends Entity
 	
 	private void checkCollider(Collider c, float x2, float y2, float newX, float newY, float newX2, float newY2)
 	{
-		if(xSpeed < 0)
+		if(xSpeed < c.getXSpeed())
 		{
 			if(isBlockedLeft(c, newX, newX2, y2))
 			{
@@ -126,7 +128,7 @@ public class Player extends Entity
 				xSpeed = 0;
 			}
 		}
-		else if(xSpeed > 0)
+		else if(xSpeed > c.getXSpeed())
 		{
 			if(isBlockedRight(c, newX, newX2, y2))
 			{
@@ -135,7 +137,7 @@ public class Player extends Entity
 			}
 		}
 		
-		if(ySpeed < 0)
+		if(ySpeed < c.getYSpeed())
 		{
 			if(isBlockedUp(c, newY, newY2, x2))
 			{
@@ -143,10 +145,11 @@ public class Player extends Entity
 				ySpeed = 0;
 			}
 		}
-		else if(ySpeed > 0)
+		else if(ySpeed > c.getYSpeed())
 		{
 			if(isBlockedDown(c, newY, newY2, x2))
 			{
+				groundSpeed = c.getXSpeed();
 				onGround = true;
 				y = c.getY() - height;
 				ySpeed = 0;
@@ -190,12 +193,12 @@ public class Player extends Entity
 	
 	private void updateAnimation()
 	{
-		animation += Math.abs(xSpeed)*Time.delta();
+		animation += Math.abs(xSpeed-groundSpeed)*Time.delta();
 		animation %= 140;
 		
-		if(xSpeed > 0.2f)
+		if(xSpeed-groundSpeed > 0.2f)
 			facingRight = true;
-		if(xSpeed < -0.2f)
+		if(xSpeed-groundSpeed < -0.2f)
 			facingRight = false;
 	}
 	
