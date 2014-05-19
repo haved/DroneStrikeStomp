@@ -12,14 +12,16 @@ public class Drone extends Entity implements Collider
 	private static Texture sprite;
 	
 	private float anim;
+	private float speed;
+	private float rotation;
 	
-	public Drone(float x, float y, float xSpeed)
+	public Drone(float x, float y, float speed)
 	{
 		this.x = x;
 		this.y = y;
 		width  = 128;
 		height = 32;
-		this.xSpeed = xSpeed;
+		this.speed = speed;
 	}
 	
 	public static void init()
@@ -32,6 +34,8 @@ public class Drone extends Entity implements Collider
 	{
 		anim += Time.delta();
 		anim %= 1;
+		xSpeed = (float)Math.cos(Math.toRadians(rotation))*speed;
+		ySpeed = (float)Math.sin(Math.toRadians(rotation))*speed;
 		move(game);
 	}
 	
@@ -41,6 +45,12 @@ public class Drone extends Entity implements Collider
 		RenderEngine.resetColor();
 		sprite.bind();
 		float frame = anim < 0.5f ? 0:0.5f;
-		RenderEngine.fillRectangleWithTexture(x, y, width, height, 0, frame, 1, frame+0.5f);
+		RenderEngine.pushMatrix();
+		RenderEngine.translate(getCentreX(), getCentreY(), 0);
+		RenderEngine.pushMatrix();
+		RenderEngine.rotate(rotation, 0, 0, 1);
+		RenderEngine.fillRectangleWithTexture(-width/2, -height/2, width, height, 0, frame, 1, frame+0.5f);
+		RenderEngine.popMatrix();
+		RenderEngine.popMatrix();
 	}
 }

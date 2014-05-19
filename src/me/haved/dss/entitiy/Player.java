@@ -27,6 +27,8 @@ public class Player extends Entity
 	private boolean onGround;
 	private float groundSpeed;
 	
+	private Drone ride;
+	
 	private int maxHealth = 7;
 	private int health = 5;
 	
@@ -47,6 +49,18 @@ public class Player extends Entity
 	}
 	
 	public void update(GameDroneStrikeStomp game)
+	{
+		if(ride == null)
+		{
+			normalUpdate(game);
+		}
+		else
+		{
+			droneRideUpdate(game);
+		}
+	}
+	
+	private void normalUpdate(GameDroneStrikeStomp game)
 	{
 		ySpeed += GRAVITY * Time.delta();
 		
@@ -73,6 +87,14 @@ public class Player extends Entity
 		updateAnimation();
 	}
 	
+	private void droneRideUpdate(GameDroneStrikeStomp game)
+	{
+		this.x = ride.getCentreX()-width/2;
+		this.y = ride.getCentreY()-width/2;
+		
+		droneInput(game);
+	}
+	
 	private float getFriction()
 	{
 		return onGround ? groundFriction : airFriction;
@@ -91,9 +113,24 @@ public class Player extends Entity
 		}
 		
 		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP) & onGround)
-			ySpeed = -jump;
+			if(ySpeed > -jump)
+				ySpeed = -jump;
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_SHOOT) & onGround)
+			tryBoarding(game);
 		
 		xSpeed = Math.max(-maxSpeed, Math.min(maxSpeed, xSpeed));
+	}
+	
+	private void droneInput(GameDroneStrikeStomp game)
+	{
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP))
+		{
+			x = ride.getCentreX()-width/2;
+			y = ride.getY()-height;
+			ride = null;
+			ySpeed = -jump*1.5f;
+		}
 	}
 	
 	@Override
@@ -116,6 +153,15 @@ public class Player extends Entity
 			checkCollider(c, x2, y2, newX, newY, newX2, newY2);
 		
 		super.move(game);
+	}
+	
+	private void tryBoarding(GameDroneStrikeStomp game)
+	{
+		for(Drone d:game.drones)
+		{
+			if(getY2()+4>d.getY() & getX()+4<d.getX2() & getX2()-4>d.getX())
+				ride = d;
+		}
 	}
 	
 	private void checkCollider(Collider c, float x2, float y2, float newX, float newY, float newX2, float newY2)
@@ -206,17 +252,26 @@ public class Player extends Entity
 	{
 		RenderEngine.resetColor();
 		
-		if(getY2()>0)
+		if(ride != null)
 		{
-			sprite.bind();
-			float i = animation < 70 ? 0 : 0.5f;
-			float faceShift = facingRight ? 0.25f : -0.25f;
-			RenderEngine.fillRectangleWithTexture(x, y, width, height, i+(0.25f-faceShift), 0, i+(0.25f+faceShift), 1);
+			indicatorSprite.bind();
+			RenderEngine.fillRectangleWithTexture(x, y, width, width, 0, 0, 1, 1);
 		}
 		else
 		{
-			indicatorSprite.bind();
-			RenderEngine.fillRectangleWithTexture(x, 0, width, width, 0, 0, 1, 1);
+			if(getY2()>0)
+			{
+				sprite.bind();
+				float i = animation < 70 ? 0 : 0.5f;
+				float faceShift = facingRight ? 0.25f : -0.25f;
+				RenderEngine.fillRectangleWithTexture(x, y, width, height, i+(0.25f-faceShift), 0, i+(0.25f+faceShift), 1);
+			}
+			else
+			{
+				indicatorSprite.bind();
+				float size = (1200+y)/1200*width;
+				RenderEngine.fillRectangleWithTexture((x+width/2)-size/2, 0, size, size, 0, 0, 1, 1);
+			}
 		}
 	}
 

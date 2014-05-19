@@ -24,6 +24,7 @@ public class GameDroneStrikeStomp extends Game
 	public static final int KEY_CODE_DOWN = Keyboard.KEY_DOWN;
 	public static final int KEY_CODE_JUMP = Keyboard.KEY_Z;
 	public static final int KEY_CODE_SHOOT = Keyboard.KEY_X;
+	public static final int KEY_CODE_BOARD = KEY_CODE_SHOOT;
 	
 	private static final float HEART_SIZE = 32;
 	private static final float HEART_SPACING = 4;
@@ -40,7 +41,9 @@ public class GameDroneStrikeStomp extends Game
 	private static Texture background;
 	private static Texture heart;
 	
-	public float worldWidth = 5000;
+	public float worldWidth = 7500;
+	
+	public int wallHealth = 5;
 	
 	public Player player;
 	public ArrayList<Cloud> clouds;
@@ -72,9 +75,7 @@ public class GameDroneStrikeStomp extends Game
 	}
 	
 	public void update()
-	{
-		player.update(this);
-		
+	{		
 		makeClouds();
 		makePickups();
 		makeDrones();
@@ -82,6 +83,8 @@ public class GameDroneStrikeStomp extends Game
 		updateEntityList(clouds);
 		updateEntityList(pickups);
 		updateEntityList(drones);
+		
+		player.update(this);
 		
 		cleanEntityList(clouds);
 		cleanEntityList(pickups);
@@ -213,10 +216,10 @@ public class GameDroneStrikeStomp extends Game
 	
 	private void renderWorld()
 	{
-		player.render();
 		renderEntityList(clouds);
 		renderEntityList(pickups);
 		renderEntityList(drones);
+		player.render();
 	}
 	
 	private void renderUI()
