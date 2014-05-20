@@ -27,6 +27,8 @@ public class Player extends Entity
 	private boolean onGround;
 	private float groundSpeed;
 	
+	private float droneRotSpeed = 150;
+	private float droneSpeedChangeSpeed = 20;
 	private Drone ride;
 	
 	private int maxHealth = 7;
@@ -123,7 +125,19 @@ public class Player extends Entity
 	}
 	
 	private void droneInput(GameDroneStrikeStomp game)
-	{
+	{	
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_DRONE_LEFT))
+			ride.rotation -= Time.delta() * droneRotSpeed;
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_DRONE_RIGHT))
+			ride.rotation += Time.delta() * droneRotSpeed;
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_DRONE_SPEED_UP))
+			ride.speedChange(droneSpeedChangeSpeed*Time.delta());
+		
+		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_DRONE_SPEED_DOWN))
+			ride.speedChange(-droneSpeedChangeSpeed*Time.delta());
+		
 		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP))
 		{
 			x = ride.getCentreX()-width/2;

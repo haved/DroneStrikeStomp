@@ -20,8 +20,10 @@ public class GameDroneStrikeStomp extends Game
 {
 	public static final int KEY_CODE_LEFT = Keyboard.KEY_LEFT;
 	public static final int KEY_CODE_RIGHT = Keyboard.KEY_RIGHT;
-	public static final int KEY_CODE_UP = Keyboard.KEY_UP;
-	public static final int KEY_CODE_DOWN = Keyboard.KEY_DOWN;
+	public static final int KEY_CODE_DRONE_LEFT = Keyboard.KEY_LEFT;
+	public static final int KEY_CODE_DRONE_RIGHT = Keyboard.KEY_RIGHT;
+	public static final int KEY_CODE_DRONE_SPEED_UP = Keyboard.KEY_UP;
+	public static final int KEY_CODE_DRONE_SPEED_DOWN = Keyboard.KEY_DOWN;
 	public static final int KEY_CODE_JUMP = Keyboard.KEY_Z;
 	public static final int KEY_CODE_SHOOT = Keyboard.KEY_X;
 	public static final int KEY_CODE_BOARD = KEY_CODE_SHOOT;
@@ -165,7 +167,7 @@ public class GameDroneStrikeStomp extends Game
 			
 			prevDroneLoc = y;
 			
-			drones.add(new Drone(-128, y, 140 + Util.randomFloat(20)));
+			drones.add(new Drone(-128, y, 220 + Util.randomFloat(40), 340));
 			droneTimer = 2 + Util.randomFloat(2.5f);
 		}
 	}
