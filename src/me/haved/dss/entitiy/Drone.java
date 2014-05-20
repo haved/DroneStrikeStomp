@@ -4,6 +4,7 @@ import me.haved.dss.core.DSSTextureLoader;
 import me.haved.dss.core.GameDroneStrikeStomp;
 import me.haved.engine.RenderEngine;
 import me.haved.engine.Time;
+import me.haved.engine.Util;
 
 import org.newdawn.slick.opengl.Texture;
 
@@ -11,10 +12,15 @@ public class Drone extends Entity implements Collider
 {
 	private static Texture sprite;
 	
+	private float bulletSpeed = 800;
+	
 	private float anim;
 	public float speed;
 	private float maxSpeed;
 	public float rotation;
+	
+	public float playerBulletsLeft = 5;
+	public float bulletTimer = 4;
 	
 	public Drone(float x, float y, float speed, float maxSpeed)
 	{
@@ -36,9 +42,26 @@ public class Drone extends Entity implements Collider
 	{
 		anim += Time.delta();
 		anim %= 1;
-		xSpeed = (float)Math.cos(Math.toRadians(rotation))*speed + 120;
+		xSpeed = (float)Math.cos(Math.toRadians(rotation))*speed+120;
 		ySpeed = (float)Math.sin(Math.toRadians(rotation))*speed;
+		bulletUpdate(game);
 		move(game);
+	}
+	
+	public void bulletUpdate(GameDroneStrikeStomp game)
+	{
+		if(bulletTimer > 0)
+		{
+			bulletTimer -= Time.delta();
+			if(bulletTimer <= 0)
+			{
+				float rad = (float) Math.toRadians(rotation);
+				float cos = (float) Math.cos(rad);
+				float sin = (float) Math.sin(rad);
+				game.bullets.add(new Bullet(getCentreX() + cos*width/2 -4, getCentreY() + sin*width/2 -4, cos*bulletSpeed, sin*bulletSpeed));
+				bulletTimer = 3 + Util.randomFloat(3);
+			}
+		}
 	}
 	
 	@Override

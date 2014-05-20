@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
+import me.haved.dss.entitiy.Bullet;
 import me.haved.dss.entitiy.Cloud;
 import me.haved.dss.entitiy.Drone;
 import me.haved.dss.entitiy.Entity;
@@ -51,6 +52,7 @@ public class GameDroneStrikeStomp extends Game
 	public ArrayList<Cloud> clouds;
 	public ArrayList<Pickup> pickups;
 	public ArrayList<Drone> drones;
+	public ArrayList<Bullet> bullets;
 	
 	public void init()
 	{
@@ -62,6 +64,7 @@ public class GameDroneStrikeStomp extends Game
 		clouds = new ArrayList<Cloud>();
 		pickups = new ArrayList<Pickup>();
 		drones = new ArrayList<Drone>();
+		bullets = new ArrayList<Bullet>();
 		
 		makeInitialClouds();
 	}
@@ -74,6 +77,7 @@ public class GameDroneStrikeStomp extends Game
 		Cloud.init();
 		Pickup.init();
 		Drone.init();
+		Bullet.init();
 	}
 	
 	public void update()
@@ -85,12 +89,14 @@ public class GameDroneStrikeStomp extends Game
 		updateEntityList(clouds);
 		updateEntityList(pickups);
 		updateEntityList(drones);
+		updateEntityList(bullets);
 		
 		player.update(this);
 		
 		cleanEntityList(clouds);
 		cleanEntityList(pickups);
 		cleanEntityList(drones);
+		cleanEntityList(bullets);
 	}
 	
 	private void makeInitialClouds()
@@ -167,7 +173,7 @@ public class GameDroneStrikeStomp extends Game
 			
 			prevDroneLoc = y;
 			
-			drones.add(new Drone(-128, y, 220 + Util.randomFloat(40), 340));
+			drones.add(new Drone(-128, y, 220 + Util.randomFloat(40), 400));
 			droneTimer = 2 + Util.randomFloat(2.5f);
 		}
 	}
@@ -221,6 +227,7 @@ public class GameDroneStrikeStomp extends Game
 		renderEntityList(clouds);
 		renderEntityList(pickups);
 		renderEntityList(drones);
+		renderEntityList(bullets);
 		player.render();
 	}
 	

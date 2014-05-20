@@ -28,7 +28,7 @@ public class Player extends Entity
 	private float groundSpeed;
 	
 	private float droneRotSpeed = 150;
-	private float droneSpeedChangeSpeed = 20;
+	private float droneSpeedChangeSpeed = 2000;
 	private Drone ride;
 	
 	private int maxHealth = 7;
