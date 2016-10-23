@@ -31,8 +31,8 @@ public class Player extends Entity
 	private float droneSpeedChangeSpeed = 2000;
 	private Drone ride;
 	
-	private int maxHealth = 7;
-	private int health = 5;
+	private int maxHealth = 8;
+	private int health = 6;
 	
 	public Player(float x, float y)
 	{
@@ -52,6 +52,12 @@ public class Player extends Entity
 	
 	public void update(GameDroneStrikeStomp game)
 	{
+		if(isDead())
+			return;
+		if(ride != null && ride.isDead())
+		{
+			jumpOut();
+		}
 		if(ride == null)
 		{
 			normalUpdate(game);
@@ -79,11 +85,16 @@ public class Player extends Entity
 		
 		checkProjectilesAndPickups(game);
 		
-		if(y + height > RenderEngine.getCanvasHeight())
+		if(getY2() > RenderEngine.getCanvasHeight()-6 & ySpeed > 0)
 		{
 			onGround = true;
-			y = RenderEngine.getCanvasHeight() - height;
+			y = RenderEngine.getCanvasHeight() - height-6;
 			ySpeed = 0;
+		}
+		if(getX2() > game.worldWidth-64 & xSpeed > 0)
+		{
+			x = game.worldWidth - width-64;
+			xSpeed = 0;
 		}
 
 		updateAnimation();
@@ -139,12 +150,7 @@ public class Player extends Entity
 			ride.speedChange(-droneSpeedChangeSpeed*Time.delta());
 		
 		if(Keyboard.isKeyDown(GameDroneStrikeStomp.KEY_CODE_JUMP))
-		{
-			x = ride.getCentreX()-width/2;
-			y = ride.getY()-height;
-			ride = null;
-			ySpeed = -jump*1.5f;
-		}
+			jumpOut();
 	}
 	
 	@Override
@@ -173,31 +179,43 @@ public class Player extends Entity
 	{
 		for(Drone d:game.drones)
 		{
-			if(getY2()+4>d.getY() & getX()+4<d.getX2() & getX2()-4>d.getX())
-				ride = d;
+			if(getY2()+4>d.getY() & getY2()-4<d.getY() & getX()+4<d.getX2() & getX2()-4>d.getX())
+				 setRide(d);
 		}
+	}
+	
+	private void jumpOut()
+	{
+		x = ride.getCentreX()-width/2;
+		y = ride.getCentreY()-height/2;
+		ySpeed = -jump*1.5f;
+		xSpeed = jump*1.5f*(float)Math.sin(Math.toRadians(ride.rotation));
+		x+=xSpeed*0.05f;
+		y+=ySpeed*0.05f;
+		leaveRide();
 	}
 	
 	private void checkCollider(Collider c, float x2, float y2, float newX, float newY, float newX2, float newY2)
 	{
-		if(xSpeed < c.getXSpeed())
-		{
-			if(isBlockedLeft(c, newX, newX2, y2))
+		if(!(c instanceof Cloud))
+			if(xSpeed < c.getXSpeed())
 			{
-				x = c.getX2();
-				xSpeed = 0;
+				if(isBlockedLeft(c, newX, newX2, y2))
+				{
+					x = c.getX2();
+					xSpeed = 0;
+				}
 			}
-		}
-		else if(xSpeed > c.getXSpeed())
-		{
-			if(isBlockedRight(c, newX, newX2, y2))
+			else if(xSpeed > c.getXSpeed())
 			{
-				x = c.getX() - width;
-				xSpeed = 0;
+				if(isBlockedRight(c, newX, newX2, y2))
+				{
+					x = c.getX() - width;
+					xSpeed = 0;
+				}
 			}
-		}
 		
-		if(ySpeed < c.getYSpeed())
+		if(ySpeed < c.getYSpeed() & c instanceof Cloud != true)
 		{
 			if(isBlockedUp(c, newY, newY2, x2))
 			{
@@ -244,6 +262,15 @@ public class Player extends Entity
 			if(isEntityInsidePlayer(p))
 				p.pickedUp(this);
 		}
+		
+		for(Bullet b:game.bullets)
+		{
+			if(isEntityInsidePlayer(b))
+			{
+				damage(b.getDamage());
+				b.kill();
+			}
+		}
 	}
 	
 	private boolean isEntityInsidePlayer(Entity e)
@@ -264,6 +291,8 @@ public class Player extends Entity
 	
 	public void render()
 	{
+		if(isDead())
+			return;
 		RenderEngine.resetColor();
 		
 		if(ride != null)
@@ -294,12 +323,24 @@ public class Player extends Entity
 		return Math.max(0, Math.min(game.worldWidth-RenderEngine.getCanvasWidth(), x - RenderEngine.getCanvasWidth() / 2));
 	}
 	
+	public void leaveRide()
+	{
+		ride.setRider(null);
+		ride = null;
+	}
+	
+	public void setRide(Drone d)
+	{
+		ride = d;
+		d.setRider(this);
+	}
+	
 	public void damage(int amount)
 	{
 		health -= amount;
 		if(health <= 0)
 		{
-			health = maxHealth;
+			kill();
 		}
 	}
 	

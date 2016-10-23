@@ -41,4 +41,9 @@ public class Bullet extends Entity
 		sprite.bind();
 		RenderEngine.fillRectangleWithTexture(x, y, width, height, 0, 0, 1, 1);
 	}
+	
+	public int getDamage()
+	{
+		return 1;
+	}
 }

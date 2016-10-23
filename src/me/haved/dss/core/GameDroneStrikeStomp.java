@@ -10,8 +10,11 @@ import me.haved.dss.entitiy.Bullet;
 import me.haved.dss.entitiy.Cloud;
 import me.haved.dss.entitiy.Drone;
 import me.haved.dss.entitiy.Entity;
+import me.haved.dss.entitiy.ExplotionParticle;
+import me.haved.dss.entitiy.Particle;
 import me.haved.dss.entitiy.Pickup;
 import me.haved.dss.entitiy.Player;
+import me.haved.dss.entitiy.Wall;
 import me.haved.engine.Game;
 import me.haved.engine.RenderEngine;
 import me.haved.engine.Time;
@@ -43,16 +46,21 @@ public class GameDroneStrikeStomp extends Game
 	
 	private static Texture background;
 	private static Texture heart;
+	private static Texture grass;
 	
 	public float worldWidth = 7500;
 	
 	public int wallHealth = 5;
 	
 	public Player player;
+	public Wall wall;
 	public ArrayList<Cloud> clouds;
 	public ArrayList<Pickup> pickups;
 	public ArrayList<Drone> drones;
 	public ArrayList<Bullet> bullets;
+	public ArrayList<Particle> particles;
+	
+	public boolean gameOver;
 	
 	public void init()
 	{
@@ -61,10 +69,12 @@ public class GameDroneStrikeStomp extends Game
 		RADAR_WIDTH = RenderEngine.getCanvasWidth() - 12 - HEART_SPACING*2;
 		
 		player = new Player(100, -64);
+		wall = new Wall(worldWidth-64, 0, 64, RenderEngine.getCanvasHeight(), 100);
 		clouds = new ArrayList<Cloud>();
 		pickups = new ArrayList<Pickup>();
 		drones = new ArrayList<Drone>();
 		bullets = new ArrayList<Bullet>();
+		particles = new ArrayList<Particle>();
 		
 		makeInitialClouds();
 	}
@@ -73,15 +83,18 @@ public class GameDroneStrikeStomp extends Game
 	{
 		background = DSSTextureLoader.loadTexture("bg.png");
 		heart = DSSTextureLoader.loadTexture("heart.png");
+		grass = DSSTextureLoader.loadTexture("grass.png");
 		Player.init();
 		Cloud.init();
 		Pickup.init();
 		Drone.init();
 		Bullet.init();
+		ExplotionParticle.init();
+		Wall.init();
 	}
 	
 	public void update()
-	{		
+	{
 		makeClouds();
 		makePickups();
 		makeDrones();
@@ -90,6 +103,7 @@ public class GameDroneStrikeStomp extends Game
 		updateEntityList(pickups);
 		updateEntityList(drones);
 		updateEntityList(bullets);
+		updateEntityList(particles);
 		
 		player.update(this);
 		
@@ -97,6 +111,12 @@ public class GameDroneStrikeStomp extends Game
 		cleanEntityList(pickups);
 		cleanEntityList(drones);
 		cleanEntityList(bullets);
+		cleanEntityList(particles);
+		
+		if(player.isDead())
+		{
+			gameOver = true;
+		}
 	}
 	
 	private void makeInitialClouds()
@@ -109,7 +129,7 @@ public class GameDroneStrikeStomp extends Game
 			
 			if(timer <= 0)
 			{
-				float y = 200+Util.randomFloat(600);
+				float y = 200+Util.randomFloat(500);
 				
 				if(y < prevCloudLoc)
 					y-=100;
@@ -131,7 +151,7 @@ public class GameDroneStrikeStomp extends Game
 		
 		if(cloudTimer <= 0)
 		{
-			float y = 200+Util.randomFloat(600);
+			float y = 200+Util.randomFloat(500);
 			
 			if(y < prevCloudLoc)
 				y-=100;
@@ -163,7 +183,7 @@ public class GameDroneStrikeStomp extends Game
 		
 		if(droneTimer <= 0)
 		{
-			float y = 200+Util.randomFloat(600);
+			float y = 200+Util.randomFloat(500);
 			
 			if(y < prevDroneLoc)
 				y-=100;
@@ -229,6 +249,10 @@ public class GameDroneStrikeStomp extends Game
 		renderEntityList(drones);
 		renderEntityList(bullets);
 		player.render();
+		wall.render();
+		renderEntityList(particles);
+		grass.bind();
+		RenderEngine.fillRectangleWithTexture(0, RenderEngine.getCanvasHeight()-16, worldWidth, 16, 0, 0, worldWidth/64f, 1);
 	}
 	
 	private void renderUI()
